@@ -35,18 +35,20 @@ public class ProductBasket {
 
     public void printBasket() {
         boolean empty = true;
+        int sum = 0;
         for (Product product : arr) {
             if (product == null) {
                 continue;
             }
             empty = false;
-            if (empty) {
-                System.out.println("в корзине пусто");
-            } else {
-                System.out.println(product);
-            }
+            System.out.println(product);
+            sum += product.getCost();
         }
-        System.out.println("Итого: " + getBasketCost());
+        if (empty) {
+            System.out.println("в корзине пусто");
+            return;
+        }
+        System.out.println("Итого: " + sum);
     }
 
     public boolean hasProduct(String name) {

@@ -1,35 +1,42 @@
 package org.skypro.skyshop.basket;
 
-import org.skypro.skyshop.product.DiscountProduct;
-import org.skypro.skyshop.product.FixPriceProduct;
 import org.skypro.skyshop.product.Product;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class ProductBasket {
-    private Product[] arr;
+    private List<Product> list;
 
     public ProductBasket() {
-        arr = new Product[5];
+        list = new LinkedList<>();
     }
 
     public void add(Product product) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] != null) {
-                continue;
-            }
-            arr[i] = product;
-            return;
+        if (product == null) {
+            throw new IllegalArgumentException("product null value forbidden");
         }
-        System.out.println("Невозможно добавить продукт");
+        list.add(product);
+    }
+
+    public List<Product> remove(String name) {
+        List<Product> removedProducts = new LinkedList<>();
+        ListIterator<Product> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            Product product = iterator.next();
+            if (product.getName().equals(name)) {
+                removedProducts.add(product);
+                iterator.remove();
+            }
+        }
+        return removedProducts;
     }
 
     public int getBasketCost() {
         int sum = 0;
-        for (Product products : arr) {
-            if (products == null) {
-                continue;
-            }
+        for (Product products : list) {
             sum += products.getPrice();
         }
         return sum;
@@ -39,10 +46,7 @@ public class ProductBasket {
         boolean empty = true;
         int sum = 0;
         int specProductAmount = 0;
-        for (Product product : arr) {
-            if (product == null) {
-                continue;
-            }
+        for (Product product : list) {
             if (product.isSpecial()) {
                 specProductAmount++;
             }
@@ -59,10 +63,7 @@ public class ProductBasket {
     }
 
     public boolean hasProduct(String name) {
-        for (Product product : arr) {
-            if (product == null) {
-                continue;
-            }
+        for (Product product : list) {
             if (product.getName().equals(name)) {
                 return true;
             }
@@ -71,6 +72,6 @@ public class ProductBasket {
     }
 
     public void clear() {
-        Arrays.fill(arr, null);
+        list.clear();
     }
 }

@@ -3,57 +3,53 @@ package org.skypro.skyshop.searchEngine;
 import org.skypro.skyshop.exceptions.BestResultNotFoundException;
 import org.skypro.skyshop.interfaces.Searchable;
 
-public class SearchEngine {
-    private Searchable[] searchables;
-    private int count;
+import java.util.LinkedList;
+import java.util.List;
 
-    public SearchEngine(int size) {
-        this.searchables = new Searchable[size];
-        this.count = 0;
+public class SearchEngine {
+    private List<Searchable> searchables;
+
+    public SearchEngine() {
+        this.searchables = new LinkedList<Searchable>();
     }
 
-    public Searchable[] search(String query) {
-        Searchable[] results = new Searchable[5];
-        int index = 0;
+    public List<Searchable> search(String query) {
+        List<Searchable> result = new LinkedList<>();
         for (Searchable searchable : searchables) {
-            if (searchable == null || index >= 5) {
-                break;
-            }
             if (searchable.getSearchTerm().contains(query)) {
-                results[index] = searchable;
-                index++;
+                result.add(searchable);
             }
         }
-        return results;
+        return result;
     }
 
-    private int getAppropriationIndex(Searchable searchable,String query){
-        int appropriationIndex=0;
+    private int getAppropriationIndex(Searchable searchable, String query) {
+        int appropriationIndex = 0;
         int lastFoundPosition;
-        String searchTerm=searchable.getSearchTerm();
-        lastFoundPosition=searchTerm.indexOf(query,0);
-        while(lastFoundPosition>=0){
+        String searchTerm = searchable.getSearchTerm();
+        lastFoundPosition = searchTerm.indexOf(query, 0);
+        while (lastFoundPosition >= 0) {
             appropriationIndex++;
-            lastFoundPosition=searchTerm.indexOf(query,lastFoundPosition+1);
+            lastFoundPosition = searchTerm.indexOf(query, lastFoundPosition + 1);
         }
         return appropriationIndex;
     }
 
     public Searchable searchMostAppropriate(String query) throws BestResultNotFoundException {
-        Searchable result=null;
-        int resultAppropriationIndex=0;
+        Searchable result = null;
+        int resultAppropriationIndex = 0;
         int appropriationIndex;
         for (Searchable searchable : searchables) {
             if (searchable == null) {
                 break;
             }
-            appropriationIndex=getAppropriationIndex(searchable,query);
+            appropriationIndex = getAppropriationIndex(searchable, query);
             if (appropriationIndex == 0) {
                 continue;
             }
             if (appropriationIndex > resultAppropriationIndex) {
-                resultAppropriationIndex=appropriationIndex;
-                result=searchable;
+                resultAppropriationIndex = appropriationIndex;
+                result = searchable;
             }
         }
         if (result == null) {
@@ -63,10 +59,6 @@ public class SearchEngine {
     }
 
     public void add(Searchable searchable) {
-        if (count >= searchables.length) {
-            return;
-        }
-        searchables[count] = searchable;
-        count++;
+        searchables.add(searchable);
     }
 }

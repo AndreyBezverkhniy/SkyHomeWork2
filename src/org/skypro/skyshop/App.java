@@ -11,6 +11,7 @@ import org.skypro.skyshop.product.SimpleProduct;
 import org.skypro.skyshop.searchEngine.SearchEngine;
 
 import java.util.List;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
@@ -39,16 +40,16 @@ public class App {
         }
         SearchEngine searchEngine = new SearchEngine();
         Searchable[] searchablesToAdd = {
-                new SimpleProduct("app0apple0", 100),
-                new SimpleProduct("app1apppp", 100),
-                new SimpleProduct("app2apppp", 100),
-                new SimpleProduct("app3apple1", 100),
-                new SimpleProduct("app4apppp", 100),
-                new SimpleProduct("app5apppp", 100),
-                new SimpleProduct("app6apppp", 100),
-                new SimpleProduct("app7apple2", 100),
-                new SimpleProduct("app8apple3", 100),
-                new SimpleProduct("app9apppp", 100),
+                new SimpleProduct("0_app0apple0", 101),
+                new SimpleProduct("2_app1apppp", 102),
+                new SimpleProduct("7_app2apppp", 103),
+                new SimpleProduct("8_app3apple1", 104),
+                new SimpleProduct("5_app4apppp", 105),
+                new SimpleProduct("3_app5apppp", 106),
+                new SimpleProduct("9_app6apppp", 107),
+                new SimpleProduct("6_app7apple2", 108),
+                new SimpleProduct("4_app8apple3", 109),
+                new SimpleProduct("1_app9apppp", 110),
         };
         for (Searchable searchable : searchablesToAdd) {
             searchEngine.add(searchable);
@@ -56,13 +57,13 @@ public class App {
         queries = new String[]{"none", "app", "apple"};
         for (String query : queries) {
             System.out.println("Search for \"" + query + "\"");
-            List<Searchable> foundResults = searchEngine.search(query);
+            Map<String, Searchable> foundResults = searchEngine.search(query);
             if (foundResults.isEmpty()) {
                 System.out.println("Результатов нет");
                 continue;
             }
-            for (Searchable foundResult : foundResults) {
-                System.out.println("Найдено: " + foundResult);
+            for (Map.Entry<String, Searchable> foundResult : foundResults.entrySet()) {
+                System.out.println("Найдено: " + foundResult.getKey() + " = " + foundResult.getValue());
             }
         }
     }

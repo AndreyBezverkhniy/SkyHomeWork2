@@ -6,38 +6,36 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ProductBasket {
-    private List<Product> list;
+    private Map<String, List<Product>> map;
 
     public ProductBasket() {
-        list = new LinkedList<>();
+        map = new HashMap<>();
     }
 
     public void add(Product product) {
         if (product == null) {
             throw new IllegalArgumentException("product null value forbidden");
         }
-        list.add(product);
+        map.computeIfAbsent(product.getName(), (k) -> (new LinkedList<Product>())).add(product);
     }
 
     public List<Product> remove(String name) {
         List<Product> removedProducts = new LinkedList<>();
-        ListIterator<Product> iterator = list.listIterator();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getName().equals(name)) {
-                removedProducts.add(product);
-                iterator.remove();
-            }
-        }
+        removedProducts = map.getOrDefault(name, new LinkedList<Product>());
+        map.remove(name);
         return removedProducts;
     }
 
     public int getBasketCost() {
         int sum = 0;
-        for (Product products : list) {
-            sum += products.getPrice();
+        for (List<Product> productList : map.values()) {
+            for (Product product : productList) {
+                sum += product.getPrice();
+            }
         }
         return sum;
     }
@@ -46,13 +44,15 @@ public class ProductBasket {
         boolean empty = true;
         int sum = 0;
         int specProductAmount = 0;
-        for (Product product : list) {
-            if (product.isSpecial()) {
-                specProductAmount++;
+        for (List<Product> productList : map.values()) {
+            for (Product product : productList) {
+                if (product.isSpecial()) {
+                    specProductAmount++;
+                }
+                empty = false;
+                System.out.println(product);
+                sum += product.getPrice();
             }
-            empty = false;
-            System.out.println(product);
-            sum += product.getPrice();
         }
         if (empty) {
             System.out.println("в корзине пусто");
@@ -63,15 +63,10 @@ public class ProductBasket {
     }
 
     public boolean hasProduct(String name) {
-        for (Product product : list) {
-            if (product.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
+        return map.containsKey(name) && !map.get(name).isEmpty();
     }
 
     public void clear() {
-        list.clear();
+        map.clear();
     }
 }

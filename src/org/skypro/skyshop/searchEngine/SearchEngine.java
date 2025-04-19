@@ -3,23 +3,42 @@ package org.skypro.skyshop.searchEngine;
 import org.skypro.skyshop.exceptions.BestResultNotFoundException;
 import org.skypro.skyshop.interfaces.Searchable;
 
+import javax.naming.directory.SearchControls;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.Comparator;
 
 public class SearchEngine {
-    private List<Searchable> searchables;
+    private Set<Searchable> searchables;
+
 
     public SearchEngine() {
-        this.searchables = new LinkedList<Searchable>();
+        this.searchables = new HashSet<Searchable>();
     }
 
-    public Map<String, Searchable> search(String query) {
-        Map<String, Searchable> result = new TreeMap<String, Searchable>();
+    public Set<Searchable> search(String query) {
+        Set<Searchable> result = new TreeSet<Searchable>(
+                new Comparator<Searchable>() {
+                    @Override
+                    public int compare(Searchable o1, Searchable o2) {
+                        String name1 = o1.getSearchableName();
+                        String name2 = o2.getSearchableName();
+                        int lengthCompare = Integer.compare(name2.length(), name1.length());
+                        if (lengthCompare != 0) {
+                            return lengthCompare;
+                        }
+                        return name1.compareTo(name2);
+                    }
+                }
+        );
         for (Searchable searchable : searchables) {
             if (searchable.getSearchTerm().contains(query)) {
-                result.put(searchable.getSearchableName(), searchable);
+                result.add(searchable);
             }
         }
         return result;

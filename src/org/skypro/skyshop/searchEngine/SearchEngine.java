@@ -12,6 +12,9 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Comparator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class SearchEngine {
     private Set<Searchable> searchables;
@@ -36,6 +39,10 @@ public class SearchEngine {
                     }
                 }
         );
+        Stream<Searchable> stream=searchables.stream();
+        //stream.filter(getSearchTerm().contains(query));
+        Function<Searchable,String> getTermFunc=Searchable::getSearchTerm;
+        Predicate<String> containsPredicate=String::contains();
         for (Searchable searchable : searchables) {
             if (searchable.getSearchTerm().contains(query)) {
                 result.add(searchable);

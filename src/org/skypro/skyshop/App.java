@@ -33,7 +33,7 @@ public class App {
         for (Searchable searchable : searchablesToAdd) {
             searchEngine.add(searchable);
         }
-        String[] queries = new String[]{"abc","long",""};
+        String[] queries = new String[]{"abc", "long", ""};
         for (String query : queries) {
             System.out.println("Search for \"" + query + "\"");
             Set<Searchable> foundResults = searchEngine.search(query);
@@ -45,5 +45,11 @@ public class App {
                 System.out.println("Найдено: " + foundResult.getSearchableName());
             }
         }
+        System.out.println();
+        ProductBasket basket = new ProductBasket();
+        basket.add(new DiscountProduct("discount", 100, 20));
+        basket.add(new FixPriceProduct("fix"));
+        basket.add(new SimpleProduct("simple", 300));
+        basket.printBasket();
     }
 }

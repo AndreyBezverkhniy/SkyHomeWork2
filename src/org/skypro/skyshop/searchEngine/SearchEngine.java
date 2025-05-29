@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SearchEngine {
@@ -25,29 +26,26 @@ public class SearchEngine {
     }
 
     public Set<Searchable> search(String query) {
-        Set<Searchable> result = new TreeSet<Searchable>(
-                new Comparator<Searchable>() {
-                    @Override
-                    public int compare(Searchable o1, Searchable o2) {
-                        String name1 = o1.getSearchableName();
-                        String name2 = o2.getSearchableName();
-                        int lengthCompare = Integer.compare(name2.length(), name1.length());
-                        if (lengthCompare != 0) {
-                            return lengthCompare;
-                        }
-                        return name1.compareTo(name2);
-                    }
-                }
+        Function<Searchable, String> func = Searchable::getSearchTerm;
+        Function<String, Boolean> func2 = (str) -> str.contains(query);
+        Function<Searchable, Boolean> composition = func2.compose(func);
+        Predicate<Searchable> predicate = (searchable) -> composition.apply(searchable);
+        Stream<Searchable> stream = searchables.stream();
+        Set<Searchable> result = stream.filter(predicate).collect(
+                Collectors.toCollection(
+                        () -> new TreeSet<Searchable>(
+                                (o1, o2) -> {
+                                    String name1 = o1.getSearchableName();
+                                    String name2 = o2.getSearchableName();
+                                    int lengthCompare = Integer.compare(name2.length(), name1.length());
+                                    if (lengthCompare != 0) {
+                                        return lengthCompare;
+                                    }
+                                    return name1.compareTo(name2);
+                                }
+                        )
+                )
         );
-        Stream<Searchable> stream=searchables.stream();
-        //stream.filter(getSearchTerm().contains(query));
-        Function<Searchable,String> getTermFunc=Searchable::getSearchTerm;
-        Predicate<String> containsPredicate=String::contains();
-        for (Searchable searchable : searchables) {
-            if (searchable.getSearchTerm().contains(query)) {
-                result.add(searchable);
-            }
-        }
         return result;
     }
 

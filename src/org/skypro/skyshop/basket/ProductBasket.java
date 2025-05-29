@@ -2,12 +2,7 @@ package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.product.Product;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class ProductBasket {
     private Map<String, List<Product>> map;
@@ -31,12 +26,10 @@ public class ProductBasket {
     }
 
     public int getBasketCost() {
-        int sum = 0;
-        for (List<Product> productList : map.values()) {
-            for (Product product : productList) {
-                sum += product.getPrice();
-            }
-        }
+        int sum = map.values().stream()
+                .flatMap(list -> list.stream())
+                .map(product -> product.getPrice())
+                .reduce(0, Integer::sum);
         return sum;
     }
 

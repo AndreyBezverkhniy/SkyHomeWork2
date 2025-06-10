@@ -2,12 +2,7 @@ package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.product.Product;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class ProductBasket {
     private Map<String, List<Product>> map;
@@ -31,35 +26,31 @@ public class ProductBasket {
     }
 
     public int getBasketCost() {
-        int sum = 0;
-        for (List<Product> productList : map.values()) {
-            for (Product product : productList) {
-                sum += product.getPrice();
-            }
-        }
+        int sum = map.values().stream()
+                .flatMap(Collection::stream)
+                .map(product -> product.getPrice())
+                .reduce(0, Integer::sum);
         return sum;
     }
 
+    public long getSpecialCount() {
+        long count = map.values().stream()
+                .flatMap(Collection::stream)
+                .filter(product -> product.isSpecial())
+                .count();
+        return count;
+    }
+
     public void printBasket() {
-        boolean empty = true;
-        int sum = 0;
-        int specProductAmount = 0;
-        for (List<Product> productList : map.values()) {
-            for (Product product : productList) {
-                if (product.isSpecial()) {
-                    specProductAmount++;
-                }
-                empty = false;
-                System.out.println(product);
-                sum += product.getPrice();
-            }
-        }
-        if (empty) {
+        if (map.isEmpty()) {
             System.out.println("в корзине пусто");
             return;
         }
-        System.out.println("Итого: " + sum);
-        System.out.println("Специальных товаров: " + specProductAmount);
+        map.values().stream()
+                .flatMap(Collection::stream)
+                .forEach(System.out::println);
+        System.out.println("Итого: " + getBasketCost());
+        System.out.println("Специальных товаров: " + getSpecialCount());
     }
 
     public boolean hasProduct(String name) {
